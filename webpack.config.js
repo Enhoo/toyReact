@@ -1,3 +1,6 @@
+
+const path = require("path");
+
 module.exports = {
     entry: {
         main: './main.js'
@@ -22,5 +25,9 @@ module.exports = {
     mode: 'development',
     optimization: {
         minimize: false
+    },
+    devServer:{
+        hot:true,
+        inline:true
     }
 }

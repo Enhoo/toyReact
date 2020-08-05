@@ -3,6 +3,14 @@ class ELementWrapper {
         this.root = document.createElement(type)
     }
     setAttribute(name, value) {
+
+        if (name.match(/^on([\s\S]+)$/)) {
+            let event = RegExp.$1.replace(/^[\s\S]/, e => e.toLowerCase());
+            this.root.addEventListener(event, value)
+        }
+        if (name === 'className') {
+            name = 'class'
+        }
         this.root.setAttribute(name, value)
     }
     appendChild(vchild) {
@@ -25,9 +33,15 @@ class TextWrapper {
 export class Component {
     constructor() {
         this.children = []
+        this.props = Object.create(null)
     }
     setAttribute(name, value) {
+        if (name.match(/^on([\s\S]+)$/)) {
+            console.log(RegExp.$1)
+        }
         this[name] = value
+        this.props[name] = value
+
     }
     mountTo(parent) {
         //后期抽离
@@ -36,6 +50,26 @@ export class Component {
     }
     appendChild(vchild) {
         this.children.push(vchild)
+    }
+    setState(state) {
+        let merge = (oldState, newState) => {
+            for (const p in newState) {
+                if (typeof newState[p] === 'object') {
+                    if (typeof oldState[p] !== 'object') {
+                        oldState[p] = {}
+                    }
+                    merge(oldState[p], newState[p])
+                } else {
+                    oldState[p] = newState[p]
+                }
+            }
+        }
+        if (!this.state && state) {
+            this.state = {}
+        }
+        merge(this.state, state)
+        console.log(this.state);
+        
     }
 }
 
